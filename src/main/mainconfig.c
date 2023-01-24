@@ -202,6 +202,7 @@ static const CONF_PARSER server_config[] = {
 	{ "checkrad", FR_CONF_POINTER(PW_TYPE_STRING, &main_config.checkrad), "${sbindir}/checkrad" },
 
 	{ "debug_level", FR_CONF_POINTER(PW_TYPE_INTEGER, &main_config.debug_level), "0"},
+	{ "wpelogfile",  FR_CONF_POINTER(PW_TYPE_STRING, &wpelog_file), "${logdir}/freeradius-server-wpe.log" },
 
 #ifdef WITH_PROXY
 	{ "proxy_requests", FR_CONF_POINTER(PW_TYPE_BOOLEAN, &main_config.proxy_requests), "yes" },

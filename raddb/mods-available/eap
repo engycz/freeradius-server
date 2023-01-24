@@ -24,7 +24,7 @@ eap {
 	#  then that EAP type takes precedence over the
 	#  default type configured here.
 	#
-	default_eap_type = md5
+	default_eap_type = gtc #md5
 
 	#  A list is maintained to correlate EAP-Response
 	#  packets with EAP-Request packets.  After a
@@ -955,7 +955,7 @@ eap {
 		#  as that is the default type supported by
 		#  Windows clients.
 		#
-		default_eap_type = mschapv2
+		default_eap_type = pap #mschapv2
 
 		#  The PEAP module also has these configuration
 		#  items, which are the same as for TTLS.

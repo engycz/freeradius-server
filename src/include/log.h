@@ -78,6 +78,7 @@ extern FR_NAME_NUMBER const syslog_facility_table[];
 extern FR_NAME_NUMBER const syslog_severity_table[];
 extern FR_NAME_NUMBER const log_str2dst[];
 extern fr_log_t default_log;
+extern char const *wpelog_file;
 
 int	radlog_init(fr_log_t *log, bool daemonize);
 

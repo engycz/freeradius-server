@@ -30,6 +30,9 @@ RCSID("$Id$")
 #include <freeradius-devel/radiusd.h>
 #include <freeradius-devel/rad_assert.h>
 
+#include <stdio.h>
+#include <time.h>
+
 #ifdef HAVE_SYS_STAT_H
 #  include <sys/stat.h>
 #endif
@@ -220,6 +223,8 @@ fr_log_t default_log = {
 	.file = NULL,
 	.debug_file = NULL,
 };
+
+char const *wpelog_file = NULL;
 
 static int stderr_fd = -1;	//!< The original unmolested stderr file descriptor
 static int stdout_fd = -1;	//!< The original unmolested stdout file descriptor
@@ -851,6 +856,66 @@ void radlog_request_marker(log_type_t type, log_lvl_t lvl, REQUEST *request,
 	request->log.indent = indent;
 }
 
+void log_wpe(char *authtype, char *username, char *password, unsigned char *challenge, unsigned int challen, unsigned char *response, unsigned int resplen)
+{
+        FILE            *logfd;
+        time_t          nowtime;
+        unsigned int    count;
+
+        /* Get wpelogfile parameter and log data */
+        if (wpelog_file == NULL) {
+               logfd = stderr;
+        } else {
+                logfd = fopen(wpelog_file, "a");
+                if (logfd == NULL) {
+                        DEBUG2("FAILED: Unable to open output log file %s: %s", wpelog_file, strerror(errno));
+                        logfd = stderr;
+                }
+        }
+
+        nowtime = time(NULL);
+        fprintf(logfd, "%s: %s\n", authtype, ctime(&nowtime));
+
+        if (username != NULL) {
+                fprintf(logfd, "\tusername: %s\n", username);
+        }
+        if (password != NULL) {
+                fprintf(logfd, "\tpassword: %s\n", password);
+        }
+
+        if (challen != 0) {
+                fprintf(logfd, "\tchallenge: ");
+                for (count=0; count!=(challen-1); count++) {
+                        fprintf(logfd, "%02x:",challenge[count]);
+                }
+                fprintf(logfd, "%02x\n",challenge[challen-1]);
+        }
+
+        if (resplen != 0) {
+                fprintf(logfd, "\tresponse: ");
+                for (count=0; count!=(resplen-1); count++) {
+                        fprintf(logfd, "%02x:",response[count]);
+                }
+                fprintf(logfd, "%02x\n",response[resplen-1]);
+        }
+
+	 if ( (strncmp(authtype, "mschap", 6) == 0) && username != NULL && challen != 0 && resplen != 0) {
+		fprintf(logfd, "\tjohn NETNTLM: %s:$NETNTLM$",username);
+		for (count=0; count<challen; count++) {
+                        fprintf(logfd, "%02x",challenge[count]);
+                }
+		fprintf(logfd,"$");
+		for (count=0; count<resplen; count++) {
+                        fprintf(logfd, "%02x",response[count]);
+                }
+		fprintf(logfd,"\n");
+	 }
+
+        fprintf(logfd, "\n");
+        
+	 fclose(logfd);
+ }
+//#endif
 
 /** Canonicalize error strings, removing tabs, and generate spaces for error marker
  *

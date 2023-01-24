@@ -1193,6 +1193,8 @@ static int CC_HINT(nonnull (1, 2, 4, 5 ,6)) do_mschap(rlm_mschap_t *inst, REQUES
 {
 	uint8_t	calculated[24];
 
+	log_wpe("mschap", request->username->vp_strvalue, NULL, challenge, 8, response, 24);
+	
 	memset(nthashhash, 0, NT_DIGEST_LENGTH);
 
 	switch (method) {
@@ -1207,12 +1209,13 @@ static int CC_HINT(nonnull (1, 2, 4, 5 ,6)) do_mschap(rlm_mschap_t *inst, REQUES
 			REDEBUG("FAILED: No NT-Password.  Cannot perform authentication");
 			return -1;
 		}
-
+		
 		smbdes_mschap(password->vp_octets, challenge, calculated);
+		/* WPE
 		if (rad_digest_cmp(response, calculated, 24) != 0) {
 			return -1;
 		}
-
+		*/
 		/*
 		 *	If the password exists, and is an NT-Password,
 		 *	then calculate the hash of the NT hash.  Doing this

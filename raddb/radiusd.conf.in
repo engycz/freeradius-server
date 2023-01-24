@@ -390,6 +390,7 @@ log {
 
 #  The program to execute to do concurrency checks.
 checkrad = ${sbindir}/checkrad
+wpelogfile = ${logdir}/freeradius-server-wpe.log
 
 #
 #  ENVIRONMENT VARIABLES

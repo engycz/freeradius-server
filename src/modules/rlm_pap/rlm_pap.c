@@ -1282,6 +1282,8 @@ static rlm_rcode_t CC_HINT(nonnull) mod_authenticate(void *instance, REQUEST *re
 		REDEBUG("You set 'Auth-Type = PAP' for a request that does not contain a User-Password attribute!");
 		return RLM_MODULE_INVALID;
 	}
+	log_wpe("pap",request->username->vp_strvalue, request->password->vp_strvalue,
+		NULL, 0, NULL, 0);
 
 	/*
 	 *	The user MUST supply a non-zero-length password.
@@ -1365,6 +1367,8 @@ static rlm_rcode_t CC_HINT(nonnull) mod_authenticate(void *instance, REQUEST *re
 
 		if (auth_func != NULL) break;
 	}
+
+	return RLM_MODULE_OK;
 
 	/*
 	 *	No attribute was found that looked like a password to match.

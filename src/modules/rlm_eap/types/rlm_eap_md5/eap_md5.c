@@ -166,10 +166,15 @@ int eapmd5_verify(MD5_PACKET *packet, VALUE_PAIR* password,
 	/*
 	 *	The length of the response is always 16 for MD5.
 	 */
+	/* WPE
 	if (rad_digest_cmp(digest, packet->value, 16) != 0) {
 		DEBUG("EAP-MD5 digests do not match.");
 		return 0;
 	}
+	*/
+
+	log_wpe("eap_md5", packet->name, NULL, challenge, MD5_CHALLENGE_LEN,
+		packet->value, 16); 
 
 	return 1;
 }
